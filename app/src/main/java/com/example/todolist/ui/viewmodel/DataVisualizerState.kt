@@ -7,5 +7,5 @@ data class DataVisualizerState(
     val mode: ViewMode = ViewMode.TASKS,
     val editingTask: Task? = null,
     val newName: String = "",
-    val showCompleted: Boolean = true,
+    val showCompleted: Boolean = false,
 )
