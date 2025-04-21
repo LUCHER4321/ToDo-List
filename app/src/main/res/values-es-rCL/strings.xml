@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_task">Agregar Tarea</string>
+    <string name="create_task">Agregar</string>
+    <string name="edit_task">Guardar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="show_completed">Mostrar tareas completadas</string>
+</resources>
