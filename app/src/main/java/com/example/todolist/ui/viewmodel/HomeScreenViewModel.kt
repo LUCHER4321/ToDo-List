@@ -5,13 +5,32 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.todolist.domain.Task
+import com.example.todolist.repository.ToDoRepository
+import com.example.todolist.util.coroutine
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeScreenViewModel @Inject constructor() : ViewModel() {
+class HomeScreenViewModel @Inject constructor(
+    private val repository: ToDoRepository,
+) : ViewModel() {
     var dataVisualizerState by mutableStateOf(DataVisualizerState())
         private set
+
+    init {
+        loadTasks()
+    }
+
+    private fun loadTasks(){
+        coroutine {
+            val allTasks = repository.getAllData()
+            println("Local Tasks: $allTasks")
+            kotlinx.coroutines.withContext(Dispatchers.Main){
+                dataVisualizerState = dataVisualizerState.copy(myTasks = allTasks)
+            }
+        }
+    }
 
     private fun editTasks(edit: (MutableList<Task>) -> Unit){
         val prevTasks = dataVisualizerState.myTasks.toMutableList()
@@ -21,21 +40,33 @@ class HomeScreenViewModel @Inject constructor() : ViewModel() {
 
     private fun editTask(task: Task, copy: (Task) -> Task){
         val newTask = copy(task)
+        insertTask(newTask)
         editTasks { pt ->
             pt.replaceAll { if(it.id == task.id) newTask else it }
+        }
+    }
+
+    private fun insertTask(task: Task){
+        coroutine {
+            repository.insertTasks(task)
         }
     }
 
     fun addTask(name: String){
         editTasks { pt ->
             val id = if(pt.isEmpty()) 0 else pt.maxOf { it.id } + 1
-            pt.add(Task(id, name))
+            val task = Task(id, name)
+            insertTask(task)
+            pt.add(task)
         }
     }
 
     fun removeTask(task: Task){
         editTasks { pt ->
             pt.remove(task)
+        }
+        coroutine {
+            repository.deleteTasks(task)
         }
     }
 
