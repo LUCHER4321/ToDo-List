@@ -1,6 +1,7 @@
 package com.example.todolist.ui.components
 
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -19,29 +20,37 @@ fun TaskElement(
     viewModel: HomeScreenViewModel,
     task: Task,
 ){
-    Row(modifier = modifier) {
-        Text(text = task.name)
-        Button(
-            modifier = Modifier.weight(1f),
-            onClick = { viewModel.setEditTask(task) },
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Edit,
-                contentDescription = "Edit Task"
+    LazyRow (modifier = modifier) {
+        item {
+            Text(text = task.name)
+        }
+        item {
+            Button(
+                modifier = Modifier,
+                onClick = { viewModel.setEditTask(task) },
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Edit,
+                    contentDescription = "Edit Task"
+                )
+            }
+        }
+        item {
+            Checkbox(
+                checked = task.completed,
+                onCheckedChange = { viewModel.switchTask(task) },
             )
         }
-        Checkbox(
-            checked = task.completed,
-            onCheckedChange = { viewModel.switchTask(task) },
-        )
-        Button(
-            modifier = Modifier.weight(1f),
-            onClick = { viewModel.removeTask(task) },
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Delete,
-                contentDescription = "Remove Task"
-            )
+        item {
+            Button(
+                modifier = Modifier,
+                onClick = { viewModel.removeTask(task) },
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Delete,
+                    contentDescription = "Remove Task"
+                )
+            }
         }
     }
 }
